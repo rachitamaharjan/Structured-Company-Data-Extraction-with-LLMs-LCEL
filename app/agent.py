@@ -29,6 +29,7 @@ class CompanyAgent:
         self.tools = {tool.name: tool for tool in tools}
     
     def invoke(self, inputs):
+        # Extract company info from input and call insert_company
         company_str = inputs.get("input", "")
         try:
             import re

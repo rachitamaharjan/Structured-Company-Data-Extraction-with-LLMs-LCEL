@@ -14,6 +14,7 @@ def main():
 
     for i, para in enumerate(paragraphs):
         try:
+            # Gemini free tier: (15 RPM max)
             if i > 0:
                 print(f"Waiting 5 seconds before processing next paragraph...")
                 time.sleep(5)
@@ -22,6 +23,7 @@ def main():
             company = extract_chain.invoke({"paragraph": para})
             if company.company_name:
                 print(f"Found company: {company.company_name}")
+                # Call the tool function directly instead of invoke
                 result = insert_company.func(company.model_dump())
                 print(f"{result}")
         except Exception as e:
