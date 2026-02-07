@@ -23,7 +23,7 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
-from app.models import CompanyInfo
+from app.models import CompanyList
 from app.config import GEMINI_API_KEY
 import os
 
@@ -31,15 +31,14 @@ os.environ["GOOGLE_API_KEY"] = GEMINI_API_KEY
 
 llm = ChatGoogleGenerativeAI(model="gemini-flash-latest", temperature=0)
 
-parser = PydanticOutputParser(pydantic_object=CompanyInfo)
+parser = PydanticOutputParser(pydantic_object=CompanyList)
 
 prompt = ChatPromptTemplate.from_messages([
     (
         "system",
-        "Extract company information from the paragraph. "
-        "Extract ONLY THE FIRST company mentioned with complete founding information. "
-        "Include: company name, founding date, founders (as a list), and headquarters/founding location if mentioned. "
-        "Return a single JSON object (not a list or array or table). "
+        "Extract ALL companies with complete founding information from the paragraph. "
+        "For each company, include: company name, founding date, founders (as a list), and headquarters/founding location if mentioned. "
+        "Return a JSON object with a 'companies' array containing all companies found. "
         "Format:\n{format_instructions}"
     ),
     ("human", "{paragraph}")

@@ -11,6 +11,7 @@ def load_paragraphs():
 
 def main():
     paragraphs = load_paragraphs()
+    total_companies = 0
 
     for i, para in enumerate(paragraphs):
         try:
@@ -19,15 +20,26 @@ def main():
                 print(f"Waiting 5 seconds before processing next paragraph...")
                 time.sleep(5)
             
-            print(f"Processing paragraph {i + 1}/{len(paragraphs)}...")
-            company = extract_chain.invoke({"paragraph": para})
-            if company.company_name:
-                print(f"Found company: {company.company_name}")
-                # Call the tool function directly instead of invoke
-                result = insert_company.func(company.model_dump())
-                print(f"{result}")
+            print(f"\nProcessing paragraph {i + 1}/{len(paragraphs)}...")
+            result = extract_chain.invoke({"paragraph": para})
+            
+            if result.companies:
+                print(f"Found {len(result.companies)} companies:")
+                for company in result.companies:
+                    if company.company_name:
+                        print(f"  - {company.company_name}")
+                        # Call the tool function directly
+                        insert_result = insert_company.func(company.model_dump())
+                        total_companies += 1
+                print(f"Inserted {len(result.companies)} companies")
+            else:
+                print("No companies found in this paragraph")
         except Exception as e:
-            print(f"Skipping paragraph {i + 1}:", e)
+            print(f"Error in paragraph {i + 1}:", e)
+    
+    print(f"\n{'='*50}")
+    print(f"Total companies extracted and inserted: {total_companies}")
+    print(f"{'='*50}")
 
 if __name__ == "__main__":
     main()
