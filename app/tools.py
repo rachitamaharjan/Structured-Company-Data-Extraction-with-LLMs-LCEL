@@ -55,14 +55,14 @@ def insert_company(company: dict):
 
     cur.execute(
         """
-        INSERT INTO company_details (company_name, founded_in, founded_by, founding_location)
+        INSERT INTO company_details (company_name, founded_in, founded_by, headquarters)
         VALUES (%s, %s, %s, %s)
         """,
         (
             company_obj.company_name,
             founded_date,
             company_obj.founders,
-            company_obj.founding_location,
+            company_obj.headquarters,
         )
     )
 
